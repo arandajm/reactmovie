@@ -33,6 +33,27 @@ class Home extends Component {
     this.fetchItems(endpoint);
   }
 
+  searchItem = searchTerm => {
+    let endpoint;
+    console.log(searchTerm);
+    this.setState({
+      movies: [],
+      loading: true,
+      searchTerm
+    });
+
+    if (searchTerm === "") {
+      // Popular endpoint
+      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&page=1`;
+    } else {
+      // Search enpoint
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en_US&query=${
+        this.state.searchTerm
+      }`;
+    }
+    this.fetchItems(endpoint);
+  };
+
   loadingMoreItems = () => {
     //Show loading spinner
     this.setState({ loading: true });
@@ -79,7 +100,7 @@ class Home extends Component {
               title={this.state.heroImage.original_title}
               text={this.state.heroImage.overview}
             />
-            <SearchBar />
+            <SearchBar callback={this.searchItem} />
           </div>
         ) : null}
         <FourColGrid />
