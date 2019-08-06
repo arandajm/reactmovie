@@ -81,7 +81,7 @@ class Home extends Component {
           //Append the new movies with the old movies
           movies: [...this.state.movies, ...result.results],
           heroImage: this.state.heroImage || result.results[0],
-          loading: true,
+          loading: false,
           currentPage: result.page,
           totalPages: result.total_pages
         });
@@ -103,9 +103,33 @@ class Home extends Component {
             <SearchBar callback={this.searchItem} />
           </div>
         ) : null}
-        <FourColGrid />
-        <Spinner />
-        <LoadMoreBtn />
+        <div className="rmdb-home-grid">
+          <FourColGrid
+            header={this.state.searchTerm ? "Search Result" : "Popular Movies"}
+            loading={this.state.loading}
+          >
+            {this.state.movies.map((element, i) => {
+              return (
+                <MovieThumb
+                  key={i}
+                  clickeable={true}
+                  image={
+                    element.poster_path
+                      ? `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`
+                      : "./images/no.image.jpg"
+                  }
+                  movieId={element.id}
+                  movieName={element.original_title}
+                />
+              );
+            })}
+          </FourColGrid>
+        </div>
+        {this.state.loading ? <Spinner /> : null}
+        {this.state.currentPage <= this.state.totalPages &&
+        !this.state.loading ? (
+          <LoadMoreBtn text="Load More" onClick={this.loadingMoreItems} />
+        ) : null}
       </div>
     );
   }
