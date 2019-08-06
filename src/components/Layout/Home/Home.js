@@ -64,7 +64,7 @@ class Home extends Component {
         .state.currentPage + 1}`;
     } else {
       // Search enpoint
-      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&query=${
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en_US&query=${
         this.state.searchTerm
       }&page=${this.state.currentPage + 1}`;
     }
