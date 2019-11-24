@@ -9,6 +9,60 @@ import Spinner from "../Spinner/Spinner";
 import "./Movie.css";
 
 export class Movie extends Component {
+  state = {
+    movie: null,
+    actors: null,
+    directors: [],
+    loading: false
+  };
+
+  componentDidMount() {
+    this.setState({ loading: true });
+    // Build movie url
+    const endpoint = `${API_URL}movie/${this.props.match.params.movieId}?api_key=${API_KEY}&language=en_US`;
+    // Fetch the movie...
+    this.fetchItems(endpoint);
+  }
+
+  fetchItems = endpoint => {
+    fetch(endpoint)
+      .then(result => result.json())
+      .then(result => {
+        console.log(result);
+        if (result.status_code) {
+          //Update loading
+          this.setState({ loading: false });
+        } else {
+          //Update the movie state
+          this.setState(
+            {
+              //Append the new movie
+              movie: result
+            },
+            // call to callback function to fetch actors and
+            () => {
+              const endpoint = `${API_URL}movie/${this.props.match.params.movieId}/credits?api_key=${API_KEY}`;
+              //Fetch actors in the state
+              fetch(endpoint)
+                .then(result => result.json())
+                .then(result => {
+                  const directors = result.crew.filter(
+                    member => member.job === "Director"
+                  );
+                  // Set actors and directors in the state
+                  this.setState({
+                    actors: result.cast,
+                    directors: directors,
+                    loading: false
+                  });
+                })
+                .catch(err => console.log(err));
+            }
+          );
+        }
+      });
+  };
+
   render() {
     return (
       <div className="rmdb-movie">
