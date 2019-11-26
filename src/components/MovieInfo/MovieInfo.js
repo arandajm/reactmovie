@@ -1,7 +1,7 @@
 import React from "react";
 import { IMAGE_BASE_URL, POSTER_SIZE, BACKDROP_SIZE } from "../../config";
 import FontAwesome from "react-fontawesome";
-import { MovieThumb } from "../MovieThumb/MovieThumb";
+import MovieThumb from "../MovieThumb/MovieThumb";
 import "./MovieInfo.css";
 import PropTypes from "prop-types";
 
@@ -20,7 +20,7 @@ const MovieInfo = props => {
           <MovieThumb
             image={
               props.movie.poster_path
-                ? "${IMAGE_BASE_URL}${BACKDROP_SIZE}${props.movie.poster_path}"
+                ? `${IMAGE_BASE_URL}${BACKDROP_SIZE}${props.movie.poster_path}`
                 : "./images/no_image.jpg"
             }
             clickable={false}

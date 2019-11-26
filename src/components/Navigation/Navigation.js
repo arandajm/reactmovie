@@ -5,9 +5,9 @@ import "./Navigation.css";
 
 const Navigation = props => {
   return (
-    <div className="rmdb-navigator">
-      <div className="rmdb-navigator content">
-        <Link to="/home">
+    <div className="rmdb-navigation">
+      <div className="rmdb-navigation-content">
+        <Link to="/">
           <p>Home</p>
         </Link>
         <p>/</p>
