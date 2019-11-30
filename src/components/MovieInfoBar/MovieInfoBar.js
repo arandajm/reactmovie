@@ -9,7 +9,7 @@ const MovieInfoBar = props => {
     <div className="rmdb-movieinfobar">
       <div className="rmdb-movieinfobar-content">
         <div className="rmdb-movieinfobar-content-col">
-          <FontAwesome className="fa-time" name="clock" size="2x" />
+          <FontAwesome className="fa-time" name="clock-o" size="2x" />
           <span className="rmdb-movieinfobar-info">
             Running time: {calcTime(props.time)}
           </span>

@@ -22,7 +22,10 @@ const FourColGrid = props => {
     </div>
   );
 };
-
-FourColGrid.propTypes = {};
+//Check type of the props
+FourColGrid.propTypes = {
+  header: PropTypes.string,
+  loading: PropTypes.bool.isRequired
+};
 
 export default FourColGrid;
