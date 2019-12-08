@@ -17,11 +17,17 @@ export class Movie extends Component {
   };
 
   componentDidMount() {
-    this.setState({ loading: true });
-    // Build movie url
-    const endpoint = `${API_URL}movie/${this.props.match.params.movieId}?api_key=${API_KEY}&language=en_US`;
-    // Fetch the movie...
-    this.fetchItems(endpoint);
+    if (localStorage.getItem(`${this.props.match.params.movieId}`)) {
+      // Parse to json the item(movie) that is located in the localstorage
+      const state = JSON.parse(localStorage.getItem("HomeState"));
+      this.setState({ ...state });
+    } else {
+      this.setState({ loading: true });
+      // Build movie url
+      const endpoint = `${API_URL}movie/${this.props.match.params.movieId}?api_key=${API_KEY}&language=en_US`;
+      // Fetch the movie...
+      this.fetchItems(endpoint);
+    }
   }
 
   fetchItems = endpoint => {
@@ -50,11 +56,20 @@ export class Movie extends Component {
                     member => member.job === "Director"
                   );
                   // Set actors and directors in the state
-                  this.setState({
-                    actors: result.cast,
-                    directors: directors,
-                    loading: false
-                  });
+                  this.setState(
+                    {
+                      actors: result.cast,
+                      directors: directors,
+                      loading: false
+                    },
+                    () => {
+                      // After setState, call to callback funtion to set current state about the movie in the localstorage
+                      localStorage.setItem(
+                        `${this.props.match.params.movieId}`,
+                        JSON.stringify(this.state)
+                      );
+                    }
+                  );
                 })
                 .catch(err => console.log(err));
             }

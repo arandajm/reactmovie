@@ -27,10 +27,16 @@ class Home extends Component {
   };
 
   componentDidMount() {
-    //Show loading spinner
-    this.setState({ loading: true });
-    const endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&page=1`;
-    this.fetchItems(endpoint);
+    if (localStorage.getItem("HomeState")) {
+      // Parse to json the item(state) that is located in the localstorage
+      const state = JSON.parse(localStorage.getItem("HomeState"));
+      this.setState({ ...state });
+    } else {
+      //Show loading spinner
+      this.setState({ loading: true });
+      const endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&page=1`;
+      this.fetchItems(endpoint);
+    }
   }
 
   searchItem = searchTerm => {
@@ -47,9 +53,7 @@ class Home extends Component {
       endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&page=1`;
     } else {
       // Search enpoint
-      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en_US&query=${
-        this.state.searchTerm
-      }`;
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en_US&query=${this.state.searchTerm}`;
     }
     this.fetchItems(endpoint);
   };
@@ -77,14 +81,22 @@ class Home extends Component {
       .then(result => {
         console.log(result);
         //Update the state
-        this.setState({
-          //Append the new movies with the old movies
-          movies: [...this.state.movies, ...result.results],
-          heroImage: this.state.heroImage || result.results[0],
-          loading: false,
-          currentPage: result.page,
-          totalPages: result.total_pages
-        });
+        this.setState(
+          {
+            //Append the new movies with the old movies
+            movies: [...this.state.movies, ...result.results],
+            heroImage: this.state.heroImage || result.results[0],
+            loading: false,
+            currentPage: result.page,
+            totalPages: result.total_pages
+          },
+          () => {
+            if (this.state.searchTerm === "") {
+              // After setState, call to callback funtion to set current state in the localstorage
+              localStorage.setItem("HomeState", JSON.stringify(this.state));
+            }
+          }
+        );
       });
   };
 
@@ -94,9 +106,7 @@ class Home extends Component {
         {this.state.heroImage ? (
           <div>
             <HeroImage
-              image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${
-                this.state.heroImage.backdrop_path
-              }`}
+              image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${this.state.heroImage.backdrop_path}`}
               title={this.state.heroImage.original_title}
               text={this.state.heroImage.overview}
             />
