@@ -75,7 +75,7 @@ class Home extends Component {
     this.fetchItems(endpoint);
   };
 
-  fetchItems = endpoint => {
+  /*   fetchItems = endpoint => {
     fetch(endpoint)
       .then(result => result.json())
       .then(result => {
@@ -98,6 +98,34 @@ class Home extends Component {
           }
         );
       });
+  }; */
+
+  fetchItems = async endpoint => {
+    // ES6 destructuring state
+    const { movies, heroImage, searchTerm } = this.state;
+    // use await to manage async calls
+    const result = await (await fetch(endpoint)).json();
+    try {
+      //Update the state
+      this.setState(
+        {
+          //Append the new movies with the old movies
+          movies: [...movies, ...result.results],
+          heroImage: heroImage || result.results[0],
+          loading: false,
+          currentPage: result.page,
+          totalPages: result.total_pages
+        },
+        () => {
+          if (searchTerm === "") {
+            // After setState, call to callback funtion to set current state in the localstorage
+            localStorage.setItem("HomeState", JSON.stringify(this.state));
+          }
+        }
+      );
+    } catch (e) {
+      console.log("There was an error ", e);
+    }
   };
 
   render() {

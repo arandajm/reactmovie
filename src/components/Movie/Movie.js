@@ -30,7 +30,49 @@ export class Movie extends Component {
     }
   }
 
-  fetchItems = endpoint => {
+  fetchItems = async endpoint => {
+    // ES6 destructuring props
+    const { movieId } = this.props.match.params.movieId;
+    try {
+      // use await to manage async calls
+      const result = await (await fetch(endpoint)).json();
+      if (result.status_code) {
+        //Update loading
+        this.setState({ loading: false });
+      } else {
+        //Update the movie state
+        this.setState({
+          //Append the new movie
+          movie: result
+        });
+        const creditEndpoint = `${API_URL}movie/${movieId}/credits?api_key=${API_KEY}`;
+        // use await to manage async calls
+        const creditResult = await (await fetch(creditEndpoint)).json();
+        const directors = result.crew.filter(
+          member => member.job === "Director"
+        );
+        // Set actors and directors in the state
+        this.setState(
+          {
+            actors: creditResult.cast,
+            directors: directors,
+            loading: false
+          },
+          () => {
+            // After setState, call to callback funtion to set current state about the movie in the localstorage
+            localStorage.setItem(
+              `${this.props.match.params.movieId}`,
+              JSON.stringify(this.state)
+            );
+          }
+        );
+      }
+    } catch (e) {
+      console.log("There was an error: ", e);
+    }
+  };
+
+  /* fetchItems = endpoint => {
     fetch(endpoint)
       .then(result => result.json())
       .then(result => {
@@ -47,7 +89,7 @@ export class Movie extends Component {
             },
             // call to callback function to fetch actors and
             () => {
-              const endpoint = `${API_URL}movie/${this.props.match.params.movieId}/credits?api_key=${API_KEY}`;
+              const endpoint = `${API_URL}movie/${}/credits?api_key=${API_KEY}`;
               //Fetch actors in the state
               fetch(endpoint)
                 .then(result => result.json())
@@ -76,7 +118,7 @@ export class Movie extends Component {
           );
         }
       });
-  };
+  }; */
 
   render() {
     return (
