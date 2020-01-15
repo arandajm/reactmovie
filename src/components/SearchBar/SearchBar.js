@@ -10,14 +10,18 @@ class SearchBar extends Component {
   timeout = null;
 
   doSearch = event => {
+    // ES6 Destructuring props
+    const { callback } = this.props;
+
     this.setState({
       value: event.target.value
     });
+
     // Clear Timeout
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       // call to callback function every second
-      this.props.callback(this.state.value);
+      callback(false, this.state.value);
     }, 500);
   };
 

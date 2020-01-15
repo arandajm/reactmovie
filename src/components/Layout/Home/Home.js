@@ -34,12 +34,37 @@ class Home extends Component {
     } else {
       //Show loading spinner
       this.setState({ loading: true });
-      const endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en_US&page=1`;
-      this.fetchItems(endpoint);
+      this.fetchItems(this.createEndpoint("movie/popular", false, ""));
     }
   }
 
-  searchItem = searchTerm => {
+  createEndpoint = (type, loadMore, searchTerm) => {
+    return `${API_URL}${type}?api_key=${API_KEY}&language=en_US&page=${loadMore &&
+      this.state.currentPage + 1}&query=${searchTerm}`;
+  };
+
+  updateItems = (loadMore, searchTerm) => {
+    this.setState(
+      {
+        movies: loadMore ? [...this.state.movies] : [],
+        loading: true,
+        searchTerm: loadMore ? this.state.searchTerm : searchTerm
+      },
+      () => {
+        this.fetchItems(
+          !this.state.searchTerm
+            ? this.createEndpoint("movie/popular", loadMore, "")
+            : this.createEndpoint(
+                "search/movie",
+                loadMore,
+                this.state.searchTerm
+              )
+        );
+      }
+    );
+  };
+
+  /* searchItem = searchTerm => {
     let endpoint;
     console.log(searchTerm);
     this.setState({
@@ -73,7 +98,7 @@ class Home extends Component {
       }&page=${this.state.currentPage + 1}`;
     }
     this.fetchItems(endpoint);
-  };
+  }; */
 
   /*   fetchItems = endpoint => {
     fetch(endpoint)
@@ -148,7 +173,7 @@ class Home extends Component {
               title={heroImage.original_title}
               text={heroImage.overview}
             />
-            <SearchBar callback={this.searchItem} />
+            <SearchBar callback={this.updateItems} />
           </div>
         ) : null}
         <div className="rmdb-home-grid">
@@ -174,14 +199,12 @@ class Home extends Component {
           </FourColGrid>
         </div>
         {loading ? <Spinner /> : null}
-        {currentPage <= totalPages && !loading ? (
-          <LoadMoreBtn text="Load More" onClick={this.loadingMoreItems} />
+        {currentPage < totalPages && !loading ? (
+          <LoadMoreBtn text="Load More" onClick={this.updateItems} />
         ) : null}
       </div>
     );
   }
-
-  //TODO Create a endpoint factory method
 }
 
 export default Home;

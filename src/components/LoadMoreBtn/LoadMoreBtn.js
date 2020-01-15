@@ -2,14 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./LoadMoreBtn.css";
 
-const LoadMoreBtn = props => {
+const LoadMoreBtn = ({ text, onClick }) => {
   return (
-    <div className="rmdb-loadmorebtn" onClick={props.onClick}>
-      <p>{props.text}</p>
+    <div className="rmdb-loadmorebtn" onClick={() => onClick(true)}>
+      <p>{text}</p>
     </div>
   );
 };
 
-LoadMoreBtn.propTypes = {};
+LoadMoreBtn.propTypes = {
+  text: PropTypes.string,
+  onClick: PropTypes.func
+};
 
 export default LoadMoreBtn;
